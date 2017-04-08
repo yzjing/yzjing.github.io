@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta information -->
+<meta charset="utf-8">
+<meta name="description" 
+      content="In my Fanfic project I had to work with text data that adds up to ~36G (in CSV format). The server I use has 200G RAM..." >
+<meta name="author" content="">
+
+<!-- Enable responsiveness on mobile devices-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<!-- title -->
+<title>Notes on Time & Memory optimization with Python &middot; Elise Jing</title>
+
+<!-- icons -->
+<link rel="shortcut icon" href="/public/images/favicon.ico" />
+
+<!-- stylesheets -->
+<link rel="stylesheet" href="/public/css/responsive.gs.12col.css">
+<link rel="stylesheet" href="/public/css/animate.min.css">
+<link rel="stylesheet" href="/public/css/main.css">
+
+<!-- Google fonts -->
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic&subset=latin-ext">
+
+
+
+<!-- feed links -->
+<link rel="alternate" href="http://localhost:4000/feed.xml" type="application/rss+xml" title="">
+
+    <!-- <link rel="shortcut icon" href="/public/images/favicon.ico" /> -->
+  </head>
+  <body>
+    <div class="container azul">
+      <header class="top row gutters">
+        <div class="col span_2 center">
+          <!-- TODO: add baseurl to the logo link -->
+          <!-- <a href="http://localhost:4000" id="logo" title="Elise Jing" -->
+             <!-- style="background-image: url(/public/images/logo.png);"></a> -->
+        </div>
+        <nav class="col span_10 top-navbar">
+  
+  <a href="/" title="Home"
+     >Home</a>
+  
+  <a href="/blog" title="Blog"
+     >Blog</a>
+  
+</nav>
+
+      </header>
+
+      <article class="single row gutters">
+  <time class="published" datetime="2017-03-25">25 March 2017</time>
+  <h2>Notes on Time & Memory optimization with Python</h2>
+
+  <p>In my Fanfic project I had to work with text data that adds up to ~36G (in CSV format). The server I use has 200G RAM, which seems big, but is actually not much when you manipulate data with this size. So, after repeatingly waiting for 3 days and getting a memory error, I realized I have to work on optimizing my code, which I had little training on. Therefore I’ll put my notes on how to do it here, along with some take aways that I learned by the hard way.</p>
+
+<p>I’m using Python and specifically the Pandas library to handle my data, so the notes will focus on how to save time/memory with them.</p>
+
+<h2 id="finding-the-bottle-necks">Finding the bottle necks</h2>
+<p>Instead of randomly shooting, a smarter way is to first figure out which part of the code caused the slowliness/bulkiness. That is, we need a profile of the time/memory consumption for each part, ideally each line, of the code.</p>
+
+<p>For time profiling, Python comes with very good libraries <a href="https://docs.python.org/3.5/library/profile.html">cProfile and Profile</a>. cProfile is faster, so I went with it.</p>
+
+<p>It is easy to use the library:</p>
+
+<p><code class="highlighter-rouge">python -m cProfile -s cumtime unigram_turing_opt.py</code></p>
+
+<p>This is a screenshot of the output:</p>
+
+<p><img src="../public/images/2017-03-25-time" alt="image" /></p>
+
+<p>There are a few columns; <code class="highlighter-rouge">s</code> specifies which column to sort by. Here I sort by <code class="highlighter-rouge">cumtime</code>, so the code taking the most cumulative time is shown at the top. It is also easier to redirect the output to a file and <code class="highlighter-rouge">head</code> the file.</p>
+
+<p>cProfile can also be used to time a single function. There is no need for me to describe the usage here.</p>
+
+<p>We can also use external libraries. Robert Kern has a <a href="https://github.com/rkern/line_profiler">line_profiler</a> that allows line-to-line profiling. cProfile seems enough for me so I didn’t really use it. It’s well documented, so no more notes is needed here too.</p>
+
+<p>For memory profiling, I used a library <a href="https://pypi.python.org/pypi/memory_profiler">memory_profler</a> that is similar to the line_profiler. It can also profile the entire script or just one function. To profile my main() function, I can put a decorator before it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>from memory_profiler import profile
+
+@profile
+def main(fandom):
+	print('working on fandom: ', fandom)
+	df = pd.read_csv(fandom + '_preprocessed.tsv', sep = '\t')
+</code></pre>
+</div>
+
+<p>The output:</p>
+
+<p><img src="../public/images/2017-03-25-memory" alt="image" /></p>
+
+<p>I also read a nice blog post <a href="https://www.pluralsight.com/blog/tutorials/how-to-profile-memory-usage-in-python">How to profile memory usage in Python</a> that explains how to use the library in details.</p>
+
+<h2 id="time-optimizing-notes">Time optimizing notes</h2>
+<p>By doing the profiling described above and analyzing the reports, I was able to shorten the runtime of my code from 3 days to ~1.5 hours. Here are some main take aways:</p>
+
+<ol>
+  <li>NLTK’s stemming is really slow. Stay away from it.</li>
+  <li>When working with Pandas dataframes, take out the unused columns ASAP.</li>
+  <li>Pandas’s <code class="highlighter-rouge">apply</code> can be slow if you do it row by row (<code class="highlighter-rouge">axis=1</code>). <code class="highlighter-rouge">map</code> can be better, because <code class="highlighter-rouge">map</code> operates on the series and <code class="highlighter-rouge">apply</code> on the dataframe.</li>
+</ol>
+
+<h2 id="memory-optimizing-notes">Memory optimizing notes</h2>
+<p>I haven’t totally sorted out my memory error, so will add this later.</p>
+
+</article>
+
+
+      <footer>
+        <p>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/deed.en_US">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+        </p>
+      </footer>
+    </div>
+
+    <!-- scripts -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/public/js/jquery.fitvids.js"></script>
+    <script>
+      $(document).ready(function(){
+        $("article").fitVids();
+      });
+    </script>
+  </body>
+</html>

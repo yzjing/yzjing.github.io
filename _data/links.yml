@@ -1,0 +1,8 @@
+- url: /
+  title: Home
+
+- url: /blog
+  title: Blog
+
+#- url: /research
+# title: Research

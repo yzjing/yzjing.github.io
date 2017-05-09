@@ -1,15 +1,68 @@
-#markdown: redcarpet
-highlighter: rouge
-permalink: /:title
+#
+###################################
+# Site wide configuration
+####################################
+#
+title: Elise Jing
+email:
+description: Personal site & blog
+url: yzjing.github.io
 
-url:
-baseurl:
+#
+###################################
+# Jekyll configuration
+####################################
+#
+timezone:          United States/Indianapolis
+markdown:          kramdown
+highlighter:       rouge
+excerpt_separator: <!--more-->
+permalink:         /articles/:year-:month/:title
 
-redcarpet:
-  extensions: [strikethrough, tables]
+kramdown:
+  auto_ids: true
+  footnote_nr: 1
+  entity_output: as_char
+  toc_levels: 1..6
+  enable_coderay: false
 
-sass:
-  sass_dir: public/css
-  style: :compressed
-
-twitter: cm_blackbird
+#
+###################################
+# Site Owner configuration
+####################################
+#
+owner:
+  name: Elise Jing  
+  # avatar: leonids-logo.png
+  job: 
+  bio: "Ph.D. student in complex systems. This is a site for my personal profile and blogging."
+  email:
+  disqus-shortname:ejing
+  twitter: cm_blackbird
+  facebook: #username
+  google:
+    plus: #username
+    analytics:
+    verify:
+    ad-client:
+    ad-slot:
+  bing-verify:
+  github: yzjing
+  gitlab: #username
+  stackoverflow: #123456/username   from a "http://stackoverflow.com/users/123456/username" link
+  linkedin: yzjing
+  skype: #username
+  xing: #username
+  instagram: #username
+  lastfm: #username
+  tumblr: #username
+  pinterest: #username
+  foursquare: #username
+  steam: #username
+  dribbble: #username
+  youtube: #username
+  soundcloud: #username
+  weibo: #username
+  flickr: #username
+  500px: #username
+  codepen: #username

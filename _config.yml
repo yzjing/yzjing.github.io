@@ -5,7 +5,7 @@
 #
 title: Elise Jing
 email:
-description: Profile & blog
+description: Profile
 url: 
 
 #
@@ -35,7 +35,7 @@ owner:
   name: Elise Jing  
   # avatar: leonids-logo.png
   job: 
-  bio: "Ph.D. candidate in complex systems at Indiana University Bloomington."
+  bio: "Scientist at Sirius XM Pandora."
   email:
   disqus-shortname: "ejing"
   twitter: cm_blackbird
